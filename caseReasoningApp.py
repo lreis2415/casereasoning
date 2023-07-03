@@ -1,4 +1,4 @@
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from waitress import serve
 import json
 import CaseReasonmingMethod as crm
@@ -23,17 +23,11 @@ def reasoning():
 
     # data = request.args.get("test") #从前端接收数据
     # 测试数据
-    json_demo = {"studyArea": [10, 10, 10, 10], "model": "DSM", "arg": [{"up": 0, "down": 0, "property": 15}]}
-    data = json.loads(json_demo)
-
+    json_demo = {"studyArea": [680400, 752100, 3415000, 3382000], "model": "DSM", "arg": [{"up": 6, "down": 20, "property": 15}]}
     # 输入推理任务+数据字典，返回推荐的结果
-    result = crm.caseParsing(data)
-
-
-
-
-
+    result = crm.caseParsing(json_demo)
+    return jsonify(result)
 
 if __name__ == '__main__':
     serve(app, host='0.0.0.0', port=7581)
-    # app.run()
+    #app.run()

@@ -6,7 +6,12 @@
     @   String level   : Info/Error
     @   String msg     : The message you want to show
 """
+import codecs
+import datetime
+from os import path
 
+from DSMCaseReasoning import CaseReasoning as DSMcr
+from RFCaseReasoning import CaseReasoning as RFcr
 
 def echoMsg(self, level, msg, timestr=datetime.datetime.now().strftime('%Y.%m.%d-%H:%M:%S')):
     logFilePath = path.dirname(path.dirname(__file__)) + '/log.txt'
@@ -26,13 +31,27 @@ def echoMsg(self, level, msg, timestr=datetime.datetime.now().strftime('%Y.%m.%d
     f.close()
 
 
-def caseParsing(data):
+def caseParsing(data, null=None):
     '''
-        step1:解析data中的model，判断其所属的应用任务，比如dsm
+        step1:解析data
         step2：根据dsm解析数据，因为不同的任务解析模板是不一样的，例如dsm需要studyArea，up，down，property。从转换的字典里找
-        step3：将解析的数据输入数字土壤制图的推理方法（先案例化+确定案例库名称 ——> 输入通用的相似度计算 ——>结果）
+        step3：将解析的数据输入相应的推理方法，如DSMCaseReasoning，RFCaseReasoning
 
-    :return: 结果格式预计还是json返回前端，python中先用字典，不同的任务可能不同，需考虑兼容性
+    :return: 结果为推荐的环境变量，格式为字典
     '''
+    #step1：解析数据
+    model = data['model']
+    arg = data['arg']
+    result = null
+    # step2:选择model
+    if model == 'DSM':
+        studyArea = data['studyArea']
+        #step3：将解析的数据输入相应的推理方法
+        result = DSMcr.DSMCaseReasoning(studyArea, arg[0])
+    elif model == 'RF':
+        studyArea = data['studyArea']
+        # step3：将解析的数据输入相应的推理方法
+        result = RFcr.RFCaseReasoning(studyArea, arg[0])
 
-    return null
+    return result
+    #return #结果字典
