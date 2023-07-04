@@ -112,8 +112,6 @@ class NewCase(Case):
         self.__rowend = int((self.__bottom - geotransform[3]) / resolution_y)
         self.__colstart = int((self.__left - geotransform[0]) / resolution_x)
         self.__colend = int((self.__right - geotransform[0]) / resolution_x)
-
-        # 读取相应的数据数组，注意行列范围要加一，因为Python的切片不包含结束索引
         dem_array = dem.ReadAsArray(self.__colstart, self.__rowstart, self.__colend - self.__colstart , self.__rowend - self.__rowstart )
         # 返回数据数组
         return dem_array
