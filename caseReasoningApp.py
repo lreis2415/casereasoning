@@ -4,12 +4,26 @@ import json
 import CaseReasonmingMethod as crm
 
 app = Flask(__name__)
-# app.debug = True
-
+app.debug = True
 
 @app.route('/')
 def start():  # put application's code here
     return "The program is running!"
+def convert_value(value):
+    if isinstance(value, str):
+        if value.isdigit():
+            return int(value)
+        else:
+            try:
+                return float(value)
+            except ValueError:
+                return value
+    elif isinstance(value, list):
+        return [convert_value(x) for x in value]
+    elif isinstance(value, dict):
+        return {k: convert_value(v) for k, v in value.items()}
+    else:
+        return value
 
 @app.route('/caseReasoning',methods=['GET',"POST"])
 def reasoning():
@@ -24,12 +38,10 @@ def reasoning():
     # data = request.get_data(as_text=True)
     # json_data = json.loads(data)
     # 测试数据
-    json_data = {'studyArea': ['680400', '752100', '3415000', '3382000'], 'arg': {'up': '6', 'down': '20', 'property': '15'}, 'model': 'iPSM'}
-    # json_demo = {"studyArea": [680400, 752100, 3415000, 3382000], "model": "DSM", "arg": [{"up": 6, "down": 20, "property": 15}]}
-    # 输入推理任务+数据字典，返回推荐的结果
-
-    result = crm.caseParsing(json_data)
-
+    json_data = {'studyArea': ['680400', '752100', '3415000', '3382000'],
+                 'arg': {'up': '6', 'down': '20', 'property': '15'}, 'model': 'iPSM'}
+    json_demo = convert_value(json_data)
+    result = crm.caseParsing(json_demo)
     return jsonify(result)
 
 if __name__ == '__main__':

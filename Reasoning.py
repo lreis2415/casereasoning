@@ -125,10 +125,10 @@ def generateSimilarity(newCases, caseData = None, envData = None):
 
     #将推荐环境变量存入result
     for i in range(0, len(newCases)):
-        caseIndex = int(indices[i][1])
+        caseIndex = int(indices[i][0])
         print('case', int(i+1))
         print('most similiar case:', int(y[caseIndex][0]))
-        print('similarity:', -distances[i][1])
+        print('similarity:', -distances[i][0])
         print('environmental covariates', end=':')
         result = []
         for j in range(0, envSize):

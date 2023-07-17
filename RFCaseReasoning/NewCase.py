@@ -5,46 +5,27 @@ from CaseFormat import Case
 cur_dir = path.dirname(path.abspath(__file__))
 
 class NewCase(Case):
-    proList=[]
-    #init
-    def __init__(self, typenum=None, studyarea = [640392.684, 752172.684, 3465432.0722, 3381912.0722]):
+    def __init__(self, typenum=None, studyarea = [0, 0, 100, 100]):
         '''
         研究区范围：studyarea
         :案例形式化因子： typenum类别数
         :案例形式化因子： resolution分辨率
-
         '''
         # 案例形式化因子
-        self.__typenum = typenum
+        self.set_parameter('typenum', typenum)
+        #self.__typenum = typenum
         self.__resolution = self.calculate_parameter('resolution')
         # 研究区范围变量
         self.__left = studyarea[0]
         self.__right = studyarea[1]
         self.__top = studyarea[2]
         self.__bottom = studyarea[3]
-
-    def set_typenum(self, typenum):
-        '''
-        :set_parameter函数
-        '''
-        self.__typenum = typenum
-
-    def set_resolution(self, resolution):
-        self.__resolution = resolution
-
-    def get_typenum(self, typenum):
-        '''
-        :get_parameter函数
-        '''
-        return self.__typenum
-
-    def get_resolution(self):
-        return self.__resolution
-
-    # calculate the resolution
+    #案例形式化因子计算
     def calculate_resolution(self):
-        resolution=None
+        resolution = None
         return resolution
+
+
 
 
 

@@ -8,21 +8,27 @@ cur_dir = path.dirname(path.abspath(__file__))
 class NewCase(Case):
     proList=[]
     #init
-    def __init__(self, up=None, down=None, property=None, DEMfile=None, studyarea = [640392.684, 752172.684, 3465432.0722, 3381912.0722]):
+    def __init__(self, up=None, down=None, property=None, DEMfile=None, studyarea = None):
         # 私有变量，以双下划线开头
-        self.__up = up
-        self.__down = down
-        self.__property = property
+        #self.__up = up
+        #self.__down = down
+        #self.__property = property
+        self.set_parameter('up', up)
+        self.set_parameter('down', down)
+        self.set_parameter('property', property)
         self.__DEMfile = DEMfile
         # 如果DEMfile不为None，根据DEMfile计算其他四个参数
         if DEMfile is not None:
-            self.__left = studyarea[0]
-            self.__right = studyarea[1]
-            self.__top = studyarea[2]
-            self.__bottom = studyarea[3]
+            self.__studyarea = studyarea
+            if studyarea is not None:
+
+                self.__left = studyarea[0]
+                self.__right = studyarea[1]
+                self.__top = studyarea[2]
+                self.__bottom = studyarea[3]
             self.__demArray = self.read_dem()
             self.__noData = self.readNodata()
-            self.__resolution = self.calculate_parameter("resolution")
+            #self.__resolution = self.calculate_parameter("resolution")
             self.__area = self.calculate_parameter("area")
             self.__SDH = self.calculate_parameter("SDH")
             self.__meanS = self.calculate_parameter("meanS")
@@ -107,12 +113,37 @@ class NewCase(Case):
         # 获取DEMfile的分辨率，即地理变换参数的第一个和第五个元素
         resolution_x = geotransform[1]
         resolution_y = geotransform[5]
+        self.__resolution = (abs(resolution_x) +abs(resolution_y))/2
+
         # 根据研究区范围和分辨率计算需要读取的行列范围
-        self.__rowstart = int((self.__top - geotransform[3]) / resolution_y)
-        self.__rowend = int((self.__bottom - geotransform[3]) / resolution_y)
-        self.__colstart = int((self.__left - geotransform[0]) / resolution_x)
-        self.__colend = int((self.__right - geotransform[0]) / resolution_x)
-        dem_array = dem.ReadAsArray(self.__colstart, self.__rowstart, self.__colend - self.__colstart , self.__rowend - self.__rowstart )
+        if self.__studyarea is not None:
+            # 获取栅格的行数和列数
+            rows = dem.RasterYSize
+            cols = dem.RasterXSize
+
+            # 计算栅格的地理边界
+            left = geotransform[0]
+            right = geotransform[0] + cols * geotransform[1]
+            top = geotransform[3]
+            bottom = geotransform[3] + rows * geotransform[5]
+
+            # 检查研究区域是否超出栅格边界，并相应地调整研究区域的范围
+            if self.__top > top:
+                self.__top = top
+            if self.__bottom < bottom:
+                self.__bottom = bottom
+            if self.__left < left :
+                self.__left = left
+            if self.__right > right:
+                self.__right = right
+
+            self.__rowstart = int((self.__top - geotransform[3]) / resolution_y)
+            self.__rowend = int((self.__bottom - geotransform[3]) / resolution_y)
+            self.__colstart = int((self.__left - geotransform[0]) / resolution_x)
+            self.__colend = int((self.__right - geotransform[0]) / resolution_x)
+            dem_array = dem.ReadAsArray(self.__colstart, self.__rowstart, self.__colend - self.__colstart , self.__rowend - self.__rowstart)
+        else:
+            dem_array = dem.ReadAsArray()
         # 返回数据数组
         return dem_array
 
@@ -130,6 +161,8 @@ class NewCase(Case):
         # 计算研究区范围的宽度和高度，即右减左和上减下
         width = self.__right - self.__left
         height = self.__top - self.__bottom
+        print(dem_array.shape)
+        print(self.__right , self.__left, self.__top , self.__bottom)
         # 计算分辨率，即宽度除以列数和高度除以行数的平均值
         resolution = (width / cols + height / rows) / 2
         # 返回分辨率
@@ -194,24 +227,32 @@ class NewCase(Case):
     def calculate_meanS(self):
 
         dem = gdal.Open(self.__DEMfile)
+
+        cols = dem.RasterXSize
+        rows = dem.RasterYSize
+
         geotransform = dem.GetGeoTransform()
         resolution_x = geotransform[1]
         resolution_y = geotransform[5]
-
-        left = self.__left
-        right = self.__right
-        top = self.__top
-        bottom = self.__bottom
-
-        row_start = int((top - geotransform[3]) / resolution_y)
-        row_end = int((bottom - geotransform[3]) / resolution_y)
-        col_start = int((left - geotransform[0]) / resolution_x)
-        col_end = int((right - geotransform[0]) / resolution_x)
-
-        dem_array = dem.ReadAsArray(col_start, row_start, col_end - col_start , row_end - row_start )
         mem_driver = gdal.GetDriverByName("MEM")
-        mem_ds = mem_driver.Create("", col_end - col_start , row_end - row_start , 1, gdal.GDT_Float32)
-        mem_ds.SetGeoTransform((left, resolution_x, 0, top, 0, resolution_y))
+        if self.__studyarea is not None:
+            left = self.__left
+            right = self.__right
+            top = self.__top
+            bottom = self.__bottom
+            row_start = int((top - geotransform[3]) / resolution_y)
+            row_end = int((bottom - geotransform[3]) / resolution_y)
+            col_start = int((left - geotransform[0]) / resolution_x)
+            col_end = int((right - geotransform[0]) / resolution_x)
+            dem_array = dem.ReadAsArray(col_start, row_start, col_end - col_start , row_end - row_start )
+            mem_ds = mem_driver.Create("", col_end - col_start , row_end - row_start , 1, gdal.GDT_Float32)
+            mem_ds.SetGeoTransform((left, resolution_x, 0, top, 0, resolution_y))
+        else:
+            dem_array = dem.ReadAsArray()
+            mem_ds = mem_driver.Create("", cols, rows, 1, gdal.GDT_Float32)
+            left = geotransform[0]
+            top = geotransform[3]
+            mem_ds.SetGeoTransform((left, resolution_x, 0, top, 0, resolution_y))
         mem_ds.SetProjection(dem.GetProjection())
         mem_ds.GetRasterBand(1).WriteArray(dem_array)
 
