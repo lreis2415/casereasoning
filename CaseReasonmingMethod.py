@@ -44,14 +44,14 @@ def caseParsing(data, null=None):
     arg = data['arg']
     result = null
     # step2:选择model
-    if model == 'DSM':
+    if model == 'iPSM':
         studyArea = data['studyArea']
         #step3：将解析的数据输入相应的推理方法
-        result = DSMcr.DSMCaseReasoning(studyArea, arg[0])
+        result = DSMcr.DSMCaseReasoning(studyArea, arg)
     elif model == 'RF':
         studyArea = data['studyArea']
         # step3：将解析的数据输入相应的推理方法
-        result = RFcr.RFCaseReasoning(studyArea, arg[0])
+        result = RFcr.RFCaseReasoning(studyArea, arg)
 
     return result
     #return #结果字典

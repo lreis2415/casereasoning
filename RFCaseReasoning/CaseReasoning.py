@@ -1,7 +1,4 @@
-import numpy as np
-import xlwt as xw
-import math
-import pandas as pd
+
 from DSMCaseReasoning import NewCase as nc
 import Reasoning as rs
 import sys

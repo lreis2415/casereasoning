@@ -4,7 +4,7 @@ import json
 import CaseReasonmingMethod as crm
 
 app = Flask(__name__)
-app.debug = True
+# app.debug = True
 
 
 @app.route('/')
@@ -20,14 +20,19 @@ def reasoning():
 
     :return: 返回推荐的参数
     """
-
-    # data = request.args.get("test") #从前端接收数据
+    #
+    # data = request.get_data(as_text=True)
+    # json_data = json.loads(data)
     # 测试数据
-    json_demo = {"studyArea": [680400, 752100, 3415000, 3382000], "model": "DSM", "arg": [{"up": 6, "down": 20, "property": 15}]}
+    json_data = {'studyArea': ['680400', '752100', '3415000', '3382000'], 'arg': {'up': '6', 'down': '20', 'property': '15'}, 'model': 'iPSM'}
+    # json_demo = {"studyArea": [680400, 752100, 3415000, 3382000], "model": "DSM", "arg": [{"up": 6, "down": 20, "property": 15}]}
     # 输入推理任务+数据字典，返回推荐的结果
-    result = crm.caseParsing(json_demo)
+
+    result = crm.caseParsing(json_data)
+
     return jsonify(result)
 
 if __name__ == '__main__':
     serve(app, host='0.0.0.0', port=7511)
     #app.run()
+
