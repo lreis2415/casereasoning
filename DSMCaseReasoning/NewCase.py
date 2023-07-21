@@ -256,7 +256,7 @@ class NewCase(Case):
         mem_ds.GetRasterBand(1).WriteArray(dem_array)
 
 
-        slope = gdal.DEMProcessing(cur_dir+"\\src\\slope.tif", mem_ds, "slope", alg='Horn')
+        slope = gdal.DEMProcessing(cur_dir+"/src/slope.tif", mem_ds, "slope", alg='Horn')
         slope_array = slope.ReadAsArray()
         slope_mean = np.mean(slope_array[slope_array != slope.GetRasterBand(1).GetNoDataValue()])
         return slope_mean

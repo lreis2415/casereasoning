@@ -10,11 +10,11 @@ def DSMCaseReasoning(area, arg):
     up = int(arg['up'])
     down = int(arg['down'])
     property = int(arg['property'])
-    DEMfile = cur_dir+"\\src\\dem_xc.tif"
+    DEMfile = cur_dir+"/src/dem_xc.tif"
     case = nc.NewCase(up, down, property, DEMfile, area)
     newCases = []
     newCases.append(case)
-    return rs.generateSimilarity(newCases, cur_dir+"\\src\\cases.xlsx", cur_dir+"\\src\\envClass.xlsx")
+    return rs.generateSimilarity(newCases, cur_dir+"/src/cases.xlsx", cur_dir+"/src/envClass.xlsx")
 
 '''
 if __name__ == '__main__':

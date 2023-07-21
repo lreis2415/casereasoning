@@ -45,6 +45,7 @@ def reasoning():
     return jsonify(result)
 
 if __name__ == '__main__':
-    serve(app, host='127.0.0.1', port=7511)
+    print('run')
+    serve(app, host='0.0.0.0', port=7511)
     #app.run()
 
