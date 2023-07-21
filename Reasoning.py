@@ -1,5 +1,4 @@
 import numpy as np
-import xlwt as xw
 import math
 import pandas as pd
 # @author Liang-Peng & Wang-Yijie
@@ -97,8 +96,8 @@ def generateSimilarity(newCases, caseData = None, envData = None):
     types = formtable.values[0,1:]
     params = formtable.values[1,1:]
     #计算新案例与案例库各案例相似度
-    distances = np.zeros((len(cases), 2))
-    indices = np.zeros((len(cases), 2))
+    distances = np.zeros((len(cases), 3))
+    indices = np.zeros((len(cases), 3))
     for j in range(0, len(newCases)):
         similaritys = np.zeros(np.shape(cases))
         newCase = newCases[j]
@@ -110,8 +109,8 @@ def generateSimilarity(newCases, caseData = None, envData = None):
         caseSimilaritySort = np.sort(-caseSimilarity)
         caseSimilaritySortId = np.argsort(-caseSimilarity)
         #提取第二相似案例
-        distances[j,:] = caseSimilaritySort[0:2:1]
-        indices[j, :] = caseSimilaritySortId[0:2:1]
+        distances[j,:] = caseSimilaritySort[0:3:1]
+        indices[j, :] = caseSimilaritySortId[0:3:1]
 
     #查找各案例的环境变量
     casesTable = pd.read_excel(caseData, sheet_name="Envs")
@@ -123,19 +122,52 @@ def generateSimilarity(newCases, caseData = None, envData = None):
     y, envNames_terrain = case_Envtable(envNames, envClassNames, caseIndicesIds, caseEnvs, caseIds)
     caseSize, envSize = np.shape(y)
 
+    dic={}
     #将推荐环境变量存入result
     for i in range(0, len(newCases)):
+
+        recCase = {}
         caseIndex = int(indices[i][0])
-        print('case', int(i+1))
+        recCase['case id'] = str(int(y[caseIndex][0]))
+        result = []
         print('most similiar case:', int(y[caseIndex][0]))
         print('similarity:', -distances[i][0])
         print('environmental covariates', end=':')
-        result = []
         for j in range(0, envSize):
             if j and y[caseIndex][j] == 1:
-                print(envNames_terrain[j-1],end=',')
-                result.append(envNames_terrain[j-1])
-        print('')
-    dic={}
-    dic['covariates'] = result
+                print(envNames_terrain[j - 1], end=',')
+                result.append(envNames_terrain[j - 1])
+        recCase['covariates'] = result
+        dic['most similiar case'] = recCase
+
+        newcase = {}
+        for m, colName in enumerate(colNames):
+            newcase[colName] = format(newCases[0].get_parameter(colName), '.0f')
+        dic['case formalization']=newcase
+
+        simicase = {}
+        for k in range(0,3):
+            caseIndex = int(indices[i][k])
+            cov = []
+            cases = {}
+            if -distances[i][k] > 0:
+                key = 'similiar case '+str(k+1)#+ str(int(y[caseIndex][0]))
+                #print('most similiar case:', int(y[caseIndex][0]))
+                #print('similarity:', -distances[i][k])
+                #print('environmental covariates', end=':')
+                result = []
+                for j in range(0, envSize):
+                    if j and y[caseIndex][j] == 1:
+                        #print(envNames_terrain[j-1],end=',')
+                        result.append(envNames_terrain[j-1])
+                cases['case id'] = str(int(y[caseIndex][0]))
+                cases['covariates'] = result
+                cases['similarity'] = format(-distances[i][k], '.3f')
+                simicase[key] = cases
+                #print('')
+        dic['similiar cases']=simicase
+    #print(dic)
+    #max_similarity = max(float(case["similarity"]) for case in dic.values())
+    #result = [case["covariates"] for case in dic.values() if float(case["similarity"]) == max_similarity]
+    #print(result[0])
     return dic

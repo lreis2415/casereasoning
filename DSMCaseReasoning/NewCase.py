@@ -1,5 +1,4 @@
 from os import path
-
 from osgeo import gdal
 import numpy as np
 import math

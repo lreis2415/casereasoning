@@ -35,16 +35,16 @@ def reasoning():
     :return: 返回推荐的参数
     """
     #
-    # data = request.get_data(as_text=True)
-    # json_data = json.loads(data)
+    #data = request.get_data(as_text=True)
+    #json_data = json.loads(data)
     # 测试数据
-    json_data = {'studyArea': ['680400', '752100', '3415000', '3382000'],
-                 'arg': {'up': '6', 'down': '20', 'property': '15'}, 'model': 'iPSM'}
+    json_data = {"studyArea": ["680400", "752100", "3415000", "3382000"],
+                 "arg": {"up": "6", "down": "20", "property": "15"}, "model": "iPSM"}
     json_demo = convert_value(json_data)
     result = crm.caseParsing(json_demo)
     return jsonify(result)
 
 if __name__ == '__main__':
-    serve(app, host='0.0.0.0', port=7511)
+    serve(app, host='127.0.0.1', port=7511)
     #app.run()
 
