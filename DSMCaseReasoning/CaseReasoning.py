@@ -12,6 +12,7 @@ def DSMCaseReasoning(area, arg):
     property = int(arg['property'])
     DEMfile = cur_dir+"/src/dem_xc.tif"
     case = nc.NewCase(up, down, property, DEMfile, area)
+    case.set_parameter('resolution', 30)
     newCases = []
     newCases.append(case)
     return rs.generateSimilarity(newCases, cur_dir+"/src/cases.xlsx", cur_dir+"/src/envClass.xlsx")
