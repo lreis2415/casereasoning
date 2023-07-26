@@ -127,6 +127,11 @@ class NewCase(Case):
             bottom = geotransform[3] + rows * geotransform[5]
 
             # 检查研究区域是否超出栅格边界，并相应地调整研究区域的范围
+            if self.__top < bottom or self.__bottom > top or self.__left > right or self.__right <left:
+                self.__top = top
+                self.__bottom = bottom
+                self.__left = left
+                self.__right = right
             if self.__top > top:
                 self.__top = top
             if self.__bottom < bottom:
@@ -160,8 +165,6 @@ class NewCase(Case):
         # 计算研究区范围的宽度和高度，即右减左和上减下
         width = self.__right - self.__left
         height = self.__top - self.__bottom
-        print(dem_array.shape)
-        print(self.__right , self.__left, self.__top , self.__bottom)
         # 计算分辨率，即宽度除以列数和高度除以行数的平均值
         resolution = (width / cols + height / rows) / 2
         # 返回分辨率
@@ -255,9 +258,9 @@ class NewCase(Case):
         mem_ds.SetProjection(dem.GetProjection())
         mem_ds.GetRasterBand(1).WriteArray(dem_array)
 
-
         slope = gdal.DEMProcessing(cur_dir+"/src/slope.tif", mem_ds, "slope", alg='Horn')
         slope_array = slope.ReadAsArray()
+        slope_array = slope_array[~np.isnan(slope_array)]
         slope_mean = np.mean(slope_array[slope_array != slope.GetRasterBand(1).GetNoDataValue()])
         return slope_mean
 

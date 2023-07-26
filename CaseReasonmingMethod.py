@@ -46,6 +46,8 @@ def caseParsing(data, null=None):
     # step2:选择model
     if model == 'iPSM':
         studyArea = data['studyArea']
+        if studyArea is not None and (studyArea[0] >= studyArea[1] or studyArea[0] >= studyArea[2] <= studyArea[3]):
+            return 'invalid input study area'
         #step3：将解析的数据输入相应的推理方法
         result = DSMcr.DSMCaseReasoning(studyArea, arg)
     elif model == 'RF':
