@@ -39,9 +39,10 @@ def reasoning():
     #data = request.get_data(as_text=True)
     #json_data = json.loads(data)
     # 测试数据
-    area_hs = ["13930938.8046", "13944803.5628", "6272610.1266", "6255945.02208"]
-    area_xc = ["13187337.5493", "13319340.7388", "3673702.02484", "3573518.21994"]
-    json_data = {"studyArea": area_xc,
+    area_hs = ["125.15", "125.27", "48.99", "48.88"]
+    area_xc = ["118.5", "119.6", "31.3", "30.6"]
+    area_zxh = ["116.4", "116.5", "25.7", "25.63"]
+    json_data = {"studyArea": area_hs,
                  "arg": {"up": "0", "down": "40", "property": "SOM"}, "model": "iPSM"}
 
     # Load the YAML config file containing the property codes
