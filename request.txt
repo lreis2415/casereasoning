@@ -5,5 +5,4 @@ pandas
 waitress
 gdal
 openpyxl
-yaml
-
+pyyaml
