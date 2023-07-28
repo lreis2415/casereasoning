@@ -3,3 +3,6 @@ flask
 numpy
 pandas
 waitress
+gdal
+openpyxl
+pyyaml
