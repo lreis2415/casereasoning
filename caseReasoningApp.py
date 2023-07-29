@@ -58,6 +58,27 @@ def reasoning():
     print(result)
     return jsonify(result)
 
+@app.route('/caseReasoningEGC',methods=['GET',"POST"])
+def reasoning():
+    """
+    step1: 获取参数，包括研究区范围&应用场景（例如dsm）&土壤空间推测需要的属性,测试下先用模拟数据
+    step2: 计算研究区的地理环境特征（案例化）
+    step3：根据案例化的结果进行案例推理（原型方法）
+
+    :return: 返回推荐的参数
+    """
+    #
+    data = request.get_data(as_text=True)
+    json_data = json.loads(data)
+
+    # 测试数据
+    # area_hs = ["125.15", "125.27", "48.99", "48.88"]
+    # area_xc = ["118.5", "119.6", "31.3", "30.6"]
+    # area_zxh = ["116.4", "116.5", "25.7", "25.63"]
+    json_data = {"studyArea": ["125.15", "48.99"],
+                 "arg": {"up": "0", "down": "40", "property": "SOM"}, "model": "iPSM"}
+
+
 if __name__ == '__main__':
     print('run')
     serve(app, host='0.0.0.0', port=7511)
