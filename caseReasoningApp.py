@@ -59,7 +59,7 @@ def reasoning():
     return jsonify(result)
 
 @app.route('/caseReasoningEGC',methods=['GET',"POST"])
-def reasoning():
+def reasoningEGC():
     """
     step1: 获取参数，包括研究区范围&应用场景（例如dsm）&土壤空间推测需要的属性,测试下先用模拟数据
     step2: 计算研究区的地理环境特征（案例化）
@@ -75,9 +75,17 @@ def reasoning():
     # area_hs = ["125.15", "125.27", "48.99", "48.88"]
     # area_xc = ["118.5", "119.6", "31.3", "30.6"]
     # area_zxh = ["116.4", "116.5", "25.7", "25.63"]
-    json_data = {"studyArea": ["125.15", "48.99"],
-                 "arg": {"up": "0", "down": "40", "property": "SOM"}, "model": "iPSM"}
+    #json_data = {"studyArea": ["125.15", "48.99"],
+    #             "arg": {"up": "0", "down": "40", "property": "SOM"}, "model": "iPSM"}
+    with open('config.yaml', 'r') as f:
+        config = yaml.safe_load(f)
 
+    # Replace the property value with its code from the YAML config file
+    json_data['arg']['property'] = str(config['property_codes'][json_data['arg']['property']])
+
+    json_demo = convert_value(json_data)
+    result = crm.caseParsingEGC(json_demo)
+    return jsonify(result['most_similiar_case'])
 
 if __name__ == '__main__':
     print('run')
