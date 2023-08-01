@@ -26,10 +26,8 @@ def DSMCaseReasoning(area, arg):
             return "invalid study area"
     else:
         DEMfile = cur_dir + "/src/dem_xc.tif"
-    #DEMfile = cur_dir+"/src/demhs.tif"
-    case = nc.NewCase(up, down, property, DEMfile, area)
-    #case.set_parameter('resolution', 30)
 
+    case = nc.NewCase(up, down, property, DEMfile, area)
     newCases = []
     newCases.append(case)
     return rs.generateSimilarity(newCases, cur_dir+"/src/cases.xlsx", cur_dir+"/src/envClass.xlsx")

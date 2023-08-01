@@ -38,12 +38,12 @@ def reasoning():
     #
     data = request.get_data(as_text=True)
     json_data = json.loads(data)
-    print(json_data)
+    #print(json_data)
     # 测试数据
-    # area_hs = ["125.15", "125.27", "48.99", "48.88"]
-    # area_xc = ["118.5", "119.6", "31.3", "30.6"]
+    #area_hs = ["125.15", "125.27", "48.99", "48.88"]
+    #area_xc = ["118.5", "119.6", "31.3", "30.6"]
     # area_zxh = ["116.4", "116.5", "25.7", "25.63"]
-    # json_data = {"studyArea": area_hs,
+    #json_data = {"studyArea": area_hs,
     #              "arg": {"up": "0", "down": "40", "property": "SOM"}, "model": "iPSM"}
 
     # Load the YAML config file containing the property codes
@@ -70,7 +70,7 @@ def reasoningEGC():
     #
     data = request.get_data(as_text=True)
     json_data = json.loads(data)
-
+    #print(json_data)
     # 测试数据
     # area_hs = ["125.15", "125.27", "48.99", "48.88"]
     # area_xc = ["118.5", "119.6", "31.3", "30.6"]
@@ -85,10 +85,21 @@ def reasoningEGC():
 
     json_demo = convert_value(json_data)
     result = crm.caseParsingEGC(json_demo)
-    return jsonify(result['most_similiar_case'])
+    data = result['most_similiar_case']['covariates']
+    new_covariates = []
+    for covariate in data:
+        new_covariate = ''
+        for word in covariate.split('_'):
+            new_word = word.capitalize()
+            if 'dem' in new_word.lower():
+                new_word = new_word.replace('Dem', 'DEM')
+            new_covariate += new_word + '_'
+        new_covariates.append(new_covariate[:-1])
+    jsonresult={}
+    jsonresult['covariates'] = new_covariates
+    return jsonify(jsonresult)
 
 if __name__ == '__main__':
-    print('run')
     serve(app, host='0.0.0.0', port=7511)
     #app.run()
 
