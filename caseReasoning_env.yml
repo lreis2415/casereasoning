@@ -1,0 +1,22 @@
+# Use the following commands in Anaconda shell to config python env for caseReasoning.
+#
+#   conda env create -f caseReasoning_env.yml
+#
+#   conda activate caseReasoning
+#
+#
+# Latest updated: 08/02/2023
+
+name: caseReasoning
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.9
+  - gdal<3.6
+  - pandas
+  - waitress
+  - openpyxl
+  - pyyaml
+  - flask
+  
