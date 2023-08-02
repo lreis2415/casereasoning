@@ -46,10 +46,40 @@ def caseParsing(data, null=None):
     # step2:选择model
     if model == 'iPSM':
         studyArea = data['studyArea']
-        if studyArea is not None and (studyArea[0] >= studyArea[1] or studyArea[0] >= studyArea[2] <= studyArea[3]):
+        if studyArea is not None and (studyArea[0] >= studyArea[1] or studyArea[2] <= studyArea[3]):
             return 'invalid input study area'
         #step3：将解析的数据输入相应的推理方法
         result = DSMcr.DSMCaseReasoning(studyArea, arg)
+    elif model == 'RF':
+        studyArea = data['studyArea']
+        # step3：将解析的数据输入相应的推理方法
+        result = RFcr.RFCaseReasoning(studyArea, arg)
+
+    return result
+    #return #结果字典
+
+def caseParsingEGC(data, null=None):
+    '''
+        step1:解析data
+        step2：根据dsm解析数据，因为不同的任务解析模板是不一样的，例如dsm需要studyArea，up，down，property。从转换的字典里找
+        step3：将解析的数据输入相应的推理方法，如DSMCaseReasoning，RFCaseReasoning
+
+    :return: 结果为推荐的环境变量，格式为字典
+    '''
+    #step1：解析数据
+    model = data['model']
+    arg = data['arg']
+    result = null
+    # step2:选择model
+    if model == 'iPSM':
+        studyArea = data['studyArea']
+        if studyArea is not None:
+            newArea=[studyArea[0], studyArea[0],studyArea[1],studyArea[1]]
+            #return 'invalid input study area'
+            #step3：将解析的数据输入相应的推理方法
+            result = DSMcr.DSMCaseReasoning(newArea, arg)
+        else:
+            return 'invalid input study area'
     elif model == 'RF':
         studyArea = data['studyArea']
         # step3：将解析的数据输入相应的推理方法

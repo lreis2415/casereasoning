@@ -257,8 +257,9 @@ class NewCase(Case):
             mem_ds.SetGeoTransform((left, resolution_x, 0, top, 0, resolution_y))
         mem_ds.SetProjection(dem.GetProjection())
         mem_ds.GetRasterBand(1).WriteArray(dem_array)
+        tempds=gdal.Translate('', mem_ds, format='MEM', noData=-9999.)
 
-        slope = gdal.DEMProcessing(cur_dir+"/src/slope.tif", mem_ds, "slope", alg='Horn')
+        slope = gdal.DEMProcessing(cur_dir+"/src/slope.tif", tempds, "slope", alg='Horn')
         slope_array = slope.ReadAsArray()
         slope_array = slope_array[~np.isnan(slope_array)]
         slope_mean = np.mean(slope_array[slope_array != slope.GetRasterBand(1).GetNoDataValue()])
