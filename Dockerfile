@@ -1,4 +1,4 @@
-FROM osgeo/gdal:alpine-normal-latest
+FROM ghcr.io/osgeo/gdal:alpine-normal-latest
 ## Using github actions, no need to change alpine apk mirrors
 RUN apk add py3-flask py3-waitress py3-pandas py3-yaml py3-openpyxl
 ## Running in local, comment the above line and uncomment the following line
