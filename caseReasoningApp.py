@@ -7,9 +7,12 @@ import yaml
 app = Flask(__name__)
 app.debug = True
 
+
 @app.route('/')
 def start():  # put application's code here
     return "The program is running!"
+
+
 def convert_value(value):
     if isinstance(value, str):
         if value.isdigit():
@@ -26,7 +29,8 @@ def convert_value(value):
     else:
         return value
 
-@app.route('/caseReasoning',methods=['GET',"POST"])
+
+@app.route('/caseReasoning', methods=['GET', "POST"])
 def reasoning():
     """
     step1: 获取参数，包括研究区范围&应用场景（例如dsm）&土壤空间推测需要的属性,测试下先用模拟数据
@@ -35,15 +39,15 @@ def reasoning():
 
     :return: 返回推荐的参数
     """
-    #
+    # 分治的时候要做好基本问题的形式化
     data = request.get_data(as_text=True)
     json_data = json.loads(data)
-    #print(json_data)
+    # print(json_data)
     # 测试数据
-    #area_hs = ["125.15", "125.27", "48.99", "48.88"]
-    #area_xc = ["118.5", "119.6", "31.3", "30.6"]
+    # area_hs = ["125.15", "125.27", "48.99", "48.88"]
+    # area_xc = ["118.5", "119.6", "31.3", "30.6"]
     # area_zxh = ["116.4", "116.5", "25.7", "25.63"]
-    #json_data = {"studyArea": area_hs,
+    # json_data = {"studyArea": area_hs,
     #              "arg": {"up": "0", "down": "40", "property": "SOM"}, "model": "iPSM"}
 
     # Load the YAML config file containing the property codes
@@ -54,11 +58,13 @@ def reasoning():
     json_data['arg']['property'] = str(config['property_codes'][json_data['arg']['property']])
 
     json_demo = convert_value(json_data)
-    result = crm.caseParsing(json_demo)
+    scenario, result = crm.caseParsing(json_demo)
+    print(scenario)
     print(result)
     return jsonify(result)
 
-@app.route('/caseReasoningEGC',methods=['GET',"POST"])
+
+@app.route('/caseReasoningEGC', methods=['GET', "POST"])
 def reasoningEGC():
     """
     step1: 获取参数，包括研究区范围&应用场景（例如dsm）&土壤空间推测需要的属性,测试下先用模拟数据
@@ -70,12 +76,12 @@ def reasoningEGC():
     #
     data = request.get_data(as_text=True)
     json_data = json.loads(data)
-    #print(json_data)
+    # print(json_data)
     # 测试数据
     # area_hs = ["125.15", "125.27", "48.99", "48.88"]
     # area_xc = ["118.5", "119.6", "31.3", "30.6"]
     # area_zxh = ["116.4", "116.5", "25.7", "25.63"]
-    #json_data = {"studyArea": ["125.15", "48.99"],
+    # json_data = {"studyArea": ["125.15", "48.99"],
     #             "arg": {"up": "0", "down": "40", "property": "SOM"}, "model": "iPSM"}
     with open('config.yaml', 'r') as f:
         config = yaml.safe_load(f)
@@ -95,11 +101,11 @@ def reasoningEGC():
                 new_word = new_word.replace('Dem', 'DEM')
             new_covariate += new_word + '_'
         new_covariates.append(new_covariate[:-1])
-    jsonresult={}
+    jsonresult = {}
     jsonresult['covariates'] = new_covariates
     return jsonify(jsonresult)
 
+
 if __name__ == '__main__':
     serve(app, host='0.0.0.0', port=7511)
-    #app.run()
-
+    # app.run()

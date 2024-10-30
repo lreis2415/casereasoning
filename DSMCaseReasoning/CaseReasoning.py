@@ -29,8 +29,9 @@ def DSMCaseReasoning(area, arg):
 
     case = nc.NewCase(up, down, property, DEMfile, area)
     newCases = []
+    # 形式化的应用场景需要进行返回
     newCases.append(case)
-    return rs.generateSimilarity(newCases, cur_dir+"/src/cases.xlsx", cur_dir+"/src/envClass.xlsx")
+    return newCases, rs.generateSimilarity(newCases, cur_dir+"/src/cases.xlsx", cur_dir+"/src/envClass.xlsx")
 
 '''
 if __name__ == '__main__':
